@@ -1,0 +1,117 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #121212 !important;
+  color: #fff !important;
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+a {
+  color: #fff !important;
+  text-decoration: none !important;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  background: #333;
+  border-radius: 4px;
+}
+
+a:hover {
+  background: #444;
+}
+
+/* 영화 리스트 그리드 */
+.container {
+  display: flex;
+}
+
+.movies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.items {
+  width: 100%;
+}
+
+
+/* 영화 카드 */
+.container>div {
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+
+
+.container img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.container>div>div {
+  padding: 0.75rem;
+}
+
+.container>div>div:first-of-type {
+  font-weight: 500;
+}
+
+.container>div>div:last-of-type {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+/* 영화 상세 페이지 */
+.container:has(> a) {
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.container>img:only-of-type {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.container>div:only-of-type {
+  line-height: 1.6;
+  color: #ccc;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+  #app {
+    padding: 1rem;
+  }
+
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .container img {
+    height: 220px;
+  }
+}
+
+.category {
+  align-self: auto;
+}
