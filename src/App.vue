@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ref } from 'vue';
 
 
-const movieData = ref([]);
+const movieData = ref([ ]);
 
 
 const getMovie = async () => {
