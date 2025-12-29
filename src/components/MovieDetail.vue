@@ -1,8 +1,7 @@
 <script setup>
-import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import IsLoading from '../ui/Loading.vue';
-
+import { getMovieById } from '../script/script';
 
 const movieDetail = ref(null)
 const isLoading = ref(true)
@@ -11,25 +10,15 @@ const props = defineProps({
   id: String
 })
 
-
-
-const getMovie = async (moveId) => {
-  movieDetail.value = await axios.get(`/movie/${moveId}?language=ko-kr`)
-    .then(res => res.data)
-    .catch(err => err)
-    .finally(() => isLoading.value = false)
-
-}
-
-onMounted(() => {
-  getMovie(props.id)
-
+onMounted(async () => {
+  try {
+    movieDetail.value = await getMovieById(props.id)
+  } catch (err) {
+    console.log(err);
+  } finally {
+    isLoading.value = false
+  }
 })
-
-
-
-
-
 </script>
 
 <template>
@@ -37,7 +26,7 @@ onMounted(() => {
   <router-link to="/">돌아가기</router-link>
 
 
-  <IsLoading :Loading="isLoading" v-if="isLoading"></IsLoading>
+  <IsLoading :loading="isLoading" v-if="isLoading"></IsLoading>
 
 
   <div class="movie-Detail" v-else>
@@ -59,11 +48,4 @@ onMounted(() => {
     </div>
 
   </div>
-
-
-
-
-
-
-
 </template>

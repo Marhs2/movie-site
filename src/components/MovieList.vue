@@ -1,8 +1,8 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import router from '../router';
-import axios from 'axios';
 import IsLoading from '../ui/Loading.vue';
+import { getMovie, movieSearch } from '../script/script';
 
 const movieData = ref([])
 const isLoading = ref(true)
@@ -10,66 +10,35 @@ const page = ref(1)
 const searchValue = ref('')
 const selectedGeners = ref([])
 
-
-const getMovie = async () => {
-  const response = await axios.get(`/discover/movie`, {
-    params: {
-      include_adult: false,
-      language: 'ko-kr',
-      page: page.value,
-      sort_by: 'popularity.desc',
-      with_genres: selectedGeners.value
-    }
-  }).finally(() => isLoading.value = false)
-
-
-  movieData.value = response.data
-}
-
-onMounted(() => {
-  getMovie()
+onMounted(async () => {
+  loadData()
 })
+
+const loadData = async () => {
+  try {
+    const movieList = await getMovie(page.value, selectedGeners.value);
+    movieData.value = movieList
+  } catch (err) {
+    console.log(err);
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const moveToDetail = (id) => router.push({ name: 'detail', params: { id: id } })
 
-
 watch(page, () => {
-  getMovie()
+  loadData()
 })
 
 watch(selectedGeners, async (newSelectedGeners) => {
-  getMovie()
+  loadData()
 })
 
+const searchMovie = async () => {
+  const data = await movieSearch(searchValue.value, page.value, selectedGeners.value)
 
-
-const movieSearch = async () => {
-
-  if (!searchValue.value.trim()) return getMovie();
-
-  try {
-    const search = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
-      params: {
-        query: searchValue.value, // 사용자가 입력한 검색어 (필수)
-        include_adult: false,
-        language: 'ko-kr',
-        page: page.value,
-        with_genres: selectedGeners.value
-
-      }
-    })
-
-
-
-    movieData.value = search.data
-
-  } catch (err) {
-    return err
-
-  }
-
-
-
+  movieData.value = data
 }
 
 const genres = ref([
@@ -153,12 +122,7 @@ const genres = ref([
 </script>
 
 <template>
-
-
-
-  <IsLoading :data="isLoading" v-if="isLoading"></IsLoading>
-
-
+  <IsLoading :loading="isLoading" v-if="isLoading"></IsLoading>
 
   <div class="container" v-else>
 
@@ -172,8 +136,7 @@ const genres = ref([
 
     <div class="items">
       <div class="searh-container d-flex align-items-center bg-white rounded-5">
-        <input type="text" v-model="searchValue" class="border-0 shadow-none form-control"
-          @keyup.enter="movieSearch(searchValue)">
+        <input type="text" v-model="searchValue" class="border-0 shadow-none form-control" @keyup.enter="searchMovie">
         <font-awesome-icon icon="fa-solid fa-search " class="fs-4" />
       </div>
 
@@ -184,10 +147,8 @@ const genres = ref([
             <div>{{ item.title }}</div>
             <div>{{ item.release_date }}</div>
           </div>
-
         </div>
       </div>
-
 
       <div class="move d-flex justify-content-center gap-5 mt-4 m-auto align-items-center">
         <div class="left text-white fs-4" @click="page <= 1 ? page : page--" style="cursor: pointer;">
