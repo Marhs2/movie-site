@@ -21,6 +21,7 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   console.log("페이지 이동 시도:", to.path);
+  return true
 });
 
 export default router;
