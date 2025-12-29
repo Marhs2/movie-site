@@ -4,23 +4,17 @@ import { onMounted, ref } from 'vue';
 import IsLoading from '../ui/Loading.vue';
 
 
-const movieDetail = ref([])
+const movieDetail = ref(null)
 const isLoading = ref(true)
 
 const props = defineProps({
   id: String
 })
 
-const api = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkOGM1MDJlOGVlYjdiNDcwZGViYmM3ZDViMjU3MzFiYSIsIm5iZiI6MTc1Mzg1NTMzNi41NTEsInN1YiI6IjY4ODliNTY4NTE4YjdkYmFiYTVhZTEwNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KONGxJhJ3AWq6JApsjxjoC3wKCSCLdegGip93jv7Idg';
 
 
 const getMovie = async (moveId) => {
-  movieDetail.value = await axios.get(`https://api.themoviedb.org/3/movie/${moveId}?language=ko-kr`, {
-    headers: {
-      accept: 'application/json',
-      Authorization: `Bearer ${api}`
-    }
-  })
+  movieDetail.value = await axios.get(`/movie/${moveId}?language=ko-kr`)
     .then(res => res.data)
     .catch(err => err)
     .finally(() => isLoading.value = false)
@@ -60,7 +54,7 @@ onMounted(() => {
     <div>소개: {{ movieDetail.overview }}</div>
     <div>발매일: {{ movieDetail.release_date }}</div>
     <div>
-      <a :href="`${movieDetail.homepage}`" v-if="movieDetail.homepage">영화</a>
+      <a :href="`${movieDetail.homepage}`" v-if="movieDetail.homepage" target="blank">영화</a>
       <a style="pointer-events: none;" v-else>영화 링크가 없습니다</a>
     </div>
 

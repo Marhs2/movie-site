@@ -4,7 +4,6 @@ import router from '../router';
 import axios from 'axios';
 import IsLoading from '../ui/Loading.vue';
 
-const api = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkOGM1MDJlOGVlYjdiNDcwZGViYmM3ZDViMjU3MzFiYSIsIm5iZiI6MTc1Mzg1NTMzNi41NTEsInN1YiI6IjY4ODliNTY4NTE4YjdkYmFiYTVhZTEwNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KONGxJhJ3AWq6JApsjxjoC3wKCSCLdegGip93jv7Idg';
 const movieData = ref([])
 const isLoading = ref(true)
 const page = ref(1)
@@ -13,15 +12,13 @@ const selectedGeners = ref([])
 
 
 const getMovie = async () => {
-  const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`, {
+  const response = await axios.get(`/discover/movie`, {
     params: {
       include_adult: false,
       language: 'ko-kr',
       page: page.value,
       sort_by: 'popularity.desc',
-    },
-    headers: {
-      Authorization: `Bearer ${api}`
+      with_genres: selectedGeners.value
     }
   }).finally(() => isLoading.value = false)
 
@@ -41,35 +38,14 @@ watch(page, () => {
 })
 
 watch(selectedGeners, async (newSelectedGeners) => {
-  if (newSelectedGeners.length <= 0) {
-    getMovie()
-  } else {
-    getMovieByGenre(newSelectedGeners.join(',').split(','))
-  }
+  getMovie()
 })
 
 
-const getMovieByGenre = async (genreIds) => {
-  const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`, {
-    params: {
-      include_adult: false,
-      language: 'ko-kr',
-      page: 1,
-      sort_by: 'popularity.desc',
-      with_genres: genreIds
-    },
-    headers: {
-      Authorization: `Bearer ${api}`
-    }
-  });
-  movieData.value = response.data;
-}
 
 const movieSearch = async () => {
 
-
   if (!searchValue.value.trim()) return getMovie();
-
 
   try {
     const search = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
@@ -77,13 +53,13 @@ const movieSearch = async () => {
         query: searchValue.value, // 사용자가 입력한 검색어 (필수)
         include_adult: false,
         language: 'ko-kr',
-        page: page.value // 현재 페이지 번호
-      },
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${api}`
+        page: page.value,
+        with_genres: selectedGeners.value
+
       }
     })
+
+
 
     movieData.value = search.data
 
@@ -95,9 +71,6 @@ const movieSearch = async () => {
 
 
 }
-
-
-
 
 const genres = ref([
   {
@@ -177,11 +150,6 @@ const genres = ref([
     "name": "서부"
   }
 ])
-
-
-
-
-
 </script>
 
 <template>
@@ -201,10 +169,6 @@ const genres = ref([
         <input type="checkbox" :id="item.id" :value="item.id" class="form-check-input mt-0" v-model="selectedGeners">
       </div>
     </div>
-
-
-
-
 
     <div class="items">
       <div class="searh-container d-flex align-items-center bg-white rounded-5">
