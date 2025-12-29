@@ -3,12 +3,14 @@ import { onMounted, ref, watch } from 'vue';
 import router from '../router';
 import IsLoading from '../ui/Loading.vue';
 import { getMovie, movieSearch } from '../script/script';
+import { genres } from '../assets/data';
 
 const movieData = ref([])
 const isLoading = ref(true)
+const searchLoading = ref(false)
 const page = ref(1)
 const searchValue = ref('')
-const selectedGeners = ref([])
+const selectedGeners = ref(genres)
 
 onMounted(async () => {
   loadData()
@@ -16,6 +18,7 @@ onMounted(async () => {
 
 const loadData = async () => {
   try {
+    isLoading.value = true
     const movieList = await getMovie(page.value, selectedGeners.value);
     movieData.value = movieList
   } catch (err) {
@@ -31,94 +34,25 @@ watch(page, () => {
   loadData()
 })
 
+
+
 watch(selectedGeners, async (newSelectedGeners) => {
   loadData()
 })
 
 const searchMovie = async () => {
-  const data = await movieSearch(searchValue.value, page.value, selectedGeners.value)
+  try {
+    searchLoading.value = true
+    const data = await movieSearch(searchValue.value, page.value, selectedGeners.value)
 
-  movieData.value = data
+    movieData.value = data
+  } catch (err) {
+    console.log(err);
+  } finally {
+    searchLoading.value = false
+  }
 }
 
-const genres = ref([
-  {
-    "id": 28,
-    "name": "액션"
-  },
-  {
-    "id": 12,
-    "name": "모험"
-  },
-  {
-    "id": 16,
-    "name": "애니메이션"
-  },
-  {
-    "id": 35,
-    "name": "코미디"
-  },
-  {
-    "id": 80,
-    "name": "범죄"
-  },
-  {
-    "id": 99,
-    "name": "다큐멘터리"
-  },
-  {
-    "id": 18,
-    "name": "드라마"
-  },
-  {
-    "id": 10751,
-    "name": "가족"
-  },
-  {
-    "id": 14,
-    "name": "판타지"
-  },
-  {
-    "id": 36,
-    "name": "역사"
-  },
-  {
-    "id": 27,
-    "name": "공포"
-  },
-  {
-    "id": 10402,
-    "name": "음악"
-  },
-  {
-    "id": 9648,
-    "name": "미스터리"
-  },
-  {
-    "id": 10749,
-    "name": "로맨스"
-  },
-  {
-    "id": 878,
-    "name": "SF"
-  },
-  {
-    "id": 10770,
-    "name": "TV 영화"
-  },
-  {
-    "id": 53,
-    "name": "스릴러"
-  },
-  {
-    "id": 10752,
-    "name": "전쟁"
-  },
-  {
-    "id": 37,
-    "name": "서부"
-  }
-])
 </script>
 
 <template>
@@ -141,7 +75,13 @@ const genres = ref([
       </div>
 
       <div class="movies">
-        <div v-for="(item) in movieData.results" :key="item.id" @click="moveToDetail(item.id)">
+
+
+        <IsLoading :loading="searchLoading" v-if="searchLoading"></IsLoading>
+
+
+
+        <div v-for="(item) in movieData.results" :key="item.id" @click="moveToDetail(item.id)" v-else>
           <img :src="`https://image.tmdb.org/t/p/w780/${item.poster_path}`" class="rounded">
           <div class="item-content text-white text-center p-2">
             <div>{{ item.title }}</div>
@@ -162,8 +102,4 @@ const genres = ref([
     </div>
 
   </div>
-
-
-
-
 </template>

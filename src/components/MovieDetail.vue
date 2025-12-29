@@ -12,6 +12,7 @@ const props = defineProps({
 
 onMounted(async () => {
   try {
+    isLoading.value = true
     movieDetail.value = await getMovieById(props.id)
   } catch (err) {
     console.log(err);

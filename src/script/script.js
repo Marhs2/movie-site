@@ -16,7 +16,7 @@ export async function getMovie(page, gerers) {
     return response.data
 
   } catch (err) {
-    return err;
+    console.log(err);
   }
 }
 
@@ -45,6 +45,6 @@ export async function movieSearch(searchValue, page, gerers) {
 
     return search.data
   } catch (err) {
-    return err
+    console.log(err);
   }
 }
