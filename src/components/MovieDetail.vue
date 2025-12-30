@@ -43,6 +43,11 @@ onMounted(async () => {
     </div>
     <div>소개: {{ movieDetail.overview }}</div>
     <div>발매일: {{ movieDetail.release_date }}</div>
+    <div>별점: {{ movieDetail.vote_average.toFixed(1) }}</div>
+
+
+
+
     <div>
       <a :href="`${movieDetail.homepage}`" v-if="movieDetail.homepage" target="blank">영화</a>
       <a style="pointer-events: none;" v-else>영화 링크가 없습니다</a>

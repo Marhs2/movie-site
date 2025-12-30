@@ -1,5 +1,4 @@
 import axios from "axios";
-import { langueageTypes } from "../assets/data";
 
 export async function getMovie(page, gerers, langType) {
   try {
@@ -13,6 +12,9 @@ export async function getMovie(page, gerers, langType) {
         with_origin_country: langType
       },
     });
+
+    console.log(gerers);
+    
 
     return response.data;
   } catch (err) {
@@ -49,10 +51,28 @@ export async function movieSearch(searchValue, page, gerers, langType) {
 
 
     console.log(search.data);
-    
+
 
     return search.data;
   } catch (err) {
     console.log(err);
   }
 }
+
+
+export const addWishlist = async (idx) => {
+
+  try {
+    const res = await axios.post('/account/22185600/watchlist',
+      { media_type: 'movie', media_id: idx, watchlist: true }
+    )
+    return res
+  } catch (error) {
+
+    console.log('에러', error);
+
+  }
+
+
+}
+
