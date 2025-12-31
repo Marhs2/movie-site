@@ -32,6 +32,8 @@ onMounted(async () => {
 
   <div class="movie-Detail" v-else>
 
+
+
     <img :src="`https://image.tmdb.org/t/p/original${movieDetail.poster_path}`" class="w-100 h-100">
 
 
@@ -44,6 +46,7 @@ onMounted(async () => {
     <div>소개: {{ movieDetail.overview }}</div>
     <div>발매일: {{ movieDetail.release_date }}</div>
     <div>별점: {{ movieDetail.vote_average.toFixed(1) }}</div>
+
 
 
 

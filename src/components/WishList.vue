@@ -66,13 +66,12 @@ const addWish = (id, bol) => {
   addWishlist(id, bol)
 
   if (isWishlist(id)) {
-    WishListIds.value.filter(e => e !== id)
+    WishListIds.value = WishListIds.value.filter(e => e !== id)
   } else {
-    WishListIds.value.push(id)
+    WishListIds.value = [...WishListIds.value, id]
   }
 
   console.log(WishListIds.value);
-  
 }
 
 </script>

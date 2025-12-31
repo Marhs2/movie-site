@@ -12,9 +12,6 @@ export async function getMovie(page, gerers, langType) {
         with_origin_country: langType
       },
     });
-
-
-
     return response.data;
   } catch (err) {
     console.log(err);

@@ -28,6 +28,7 @@ const getWishlistById = async () => {
 
 const loadData = async () => {
   try {
+
     isLoading.value = true;
     const movieList = await getMovie(
       page.value,
@@ -70,6 +71,18 @@ const isWishlist = (id) => {
   return WishListIds.value?.includes(id);
 };
 
+const addWish = (id, bol) => {
+  addWishlist(id, bol)
+
+  if (isWishlist(id)) {
+    WishListIds.value = WishListIds.value.filter(e => e !== id)
+  } else {
+    WishListIds.value = [...WishListIds.value, id]
+  }
+
+  console.log(WishListIds.value);
+}
+
 </script>
 
 <template>
@@ -111,7 +124,7 @@ const isWishlist = (id) => {
             </div>
           </div>
           <div>
-            <button class="w-100" @click="addWishlist(item.id, !(isWishlist(item.id)))">
+            <button class="w-100" @click="addWish(item.id, !(isWishlist(item.id)))">
               {{ isWishlist(item.id) ? '찜 취소' : '찜하기' }}
             </button>
           </div>
@@ -123,7 +136,8 @@ const isWishlist = (id) => {
           <font-awesome-icon icon="fa-solid fa-caret-left" />
         </div>
         <div class="text-white fw-bold fs-3">{{ page }} / {{ movieData.total_pages }}</div>
-        <div class="right text-white fs-4" @click="page++" style="cursor: pointer">
+        <div class="right text-white fs-4" @click="page >= movieData.total_pages ? page : page++"
+          style="cursor: pointer">
           <font-awesome-icon icon="fa-solid fa-caret-right" />
         </div>
       </div>
