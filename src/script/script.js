@@ -13,8 +13,7 @@ export async function getMovie(page, gerers, langType) {
       },
     });
 
-    console.log(gerers);
-    
+
 
     return response.data;
   } catch (err) {
@@ -48,11 +47,6 @@ export async function movieSearch(searchValue, page, gerers, langType) {
         },
       }
     );
-
-
-    console.log(search.data);
-
-
     return search.data;
   } catch (err) {
     console.log(err);
@@ -60,19 +54,35 @@ export async function movieSearch(searchValue, page, gerers, langType) {
 }
 
 
-export const addWishlist = async (idx) => {
+export const getWishlistId = async () => {
+  try {
+    const res = await axios.get('/account/22185600/watchlist/movies?language=ko-r&page=1&sort_by=created_at.asc')
 
+    return res.data.results.map(e => e.id)
+  } catch (error) {
+    console.log('에러', error);
+  }
+}
+
+export const getWishlist = async () => {
+  try {
+    const res = await axios.get('/account/22185600/watchlist/movies?language=ko-r&page=1&sort_by=created_at.asc')
+
+    return res.data
+  } catch (error) {
+    console.log('에러', error);
+  }
+}
+
+export const addWishlist = async (idx, isWish) => {
   try {
     const res = await axios.post('/account/22185600/watchlist',
-      { media_type: 'movie', media_id: idx, watchlist: true }
+      { media_type: 'movie', media_id: idx, watchlist: isWish }
     )
-    return res
+
+    console.log('성공: ', res.data);
   } catch (error) {
-
     console.log('에러', error);
-
   }
-
-
 }
 

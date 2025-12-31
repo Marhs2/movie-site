@@ -2,8 +2,8 @@
 import { onMounted, ref, watch } from "vue";
 import router from "../router";
 import IsLoading from "../ui/Loading.vue";
-import { addWishlist, getMovie, getWishlist, getWishlistId, movieSearch } from "../script/script";
-import { genres, langueageTypes } from "../assets/data";
+import { addWishlist, getWishlist, getWishlistId, movieSearch } from "../script/script";
+import { langueageTypes, genres } from "../assets/data";
 
 const movieData = ref([]);
 const isLoading = ref(true);
@@ -15,8 +15,8 @@ const langType = ref("");
 const WishListIds = ref()
 
 onMounted(async () => {
-  loadData();
   getWishlistById()
+  loadData();
 });
 
 const getWishlistById = async () => {
@@ -25,15 +25,10 @@ const getWishlistById = async () => {
   WishListIds.value = data
 }
 
-
 const loadData = async () => {
   try {
     isLoading.value = true;
-    const movieList = await getMovie(
-      page.value,
-      selectedGeners.value,
-      langType.value
-    );
+    const movieList = await getWishlist();
     movieData.value = movieList;
   } catch (err) {
     console.log(err);
@@ -42,8 +37,7 @@ const loadData = async () => {
   }
 };
 
-const moveToDetail = (id) =>
-  router.push({ name: "detail", params: { id: id } });
+const moveToDetail = (id) => router.push({ name: "detail", params: { id: id } });
 
 watch([page, langType, selectedGeners], () => loadData());
 
@@ -56,7 +50,6 @@ const searchMovie = async () => {
       selectedGeners.value,
       langType.value
     );
-
     movieData.value = data;
   } catch (err) {
     console.log(err);
@@ -66,16 +59,26 @@ const searchMovie = async () => {
   }
 };
 
-const isWishlist = (id) => {
-  return WishListIds.value?.includes(id);
-};
+const isWishlist = (id) => WishListIds.value?.includes(id)
+
+
+const addWish = (id, bol) => {
+  addWishlist(id, bol)
+
+  if (isWishlist(id)) {
+    WishListIds.value.filter(e => e !== id)
+  } else {
+    WishListIds.value.push(id)
+  }
+
+  console.log(WishListIds.value);
+  
+}
 
 </script>
 
 <template>
   <div class="container">
-
-
     <div class="category col-md-3 col-lg-2 border-end border-secondary" style="min-height: 100vh">
       <select class="LangSelect" style="width: 150px" v-model="langType" placeholder="언어">
         <option value="">전체</option>
@@ -111,7 +114,7 @@ const isWishlist = (id) => {
             </div>
           </div>
           <div>
-            <button class="w-100" @click="addWishlist(item.id, !(isWishlist(item.id)))">
+            <button class="w-100" @click="addWish(item.id, !(isWishlist(item.id)))">
               {{ isWishlist(item.id) ? '찜 취소' : '찜하기' }}
             </button>
           </div>

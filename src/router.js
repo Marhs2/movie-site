@@ -11,6 +11,12 @@ const routes = [
     name: 'detail',
     component: () => import('./components/MovieDetail.vue'),
     props: true
+  },
+  {
+    path: '/WishList',
+    name: 'WishList',
+    component: () => import('./components/WishList.vue'),
+    props: true
   }
 ];
 
